@@ -1,0 +1,23 @@
+{
+    "Most Popular film Genres": {
+        "Adventure": 78,
+        "Fantasy": 44,
+        "Animation": 33,
+        "Drama": 319,
+        "Horror": 8,
+        "Action": 88,
+        "Comedy": 100,
+        "History": 53,
+        "Western": 11,
+        "Thriller": 75,
+        "Crime": 85,
+        "Documentary": 201,
+        "Science Fiction": 44,
+        "Mystery": 35,
+        "Music": 33,
+        "Romance": 48,
+        "Family": 36,
+        "War": 33,
+        "TV Movie": 39
+    }
+}
