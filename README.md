@@ -1,4 +1,6 @@
-<h1>Weather Effects on Mental Health</h1>
+This project analyzes the reasons as to why an actor is popular. It analyzes IMDB data to see if the actor's popularity depends on their film gerne, their film success or some other facts like online presence and personality.
+
+<h1>Factors Affecting Actor Popularity</h1>
 
 <h2>Goal</h2>
 
