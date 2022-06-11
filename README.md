@@ -27,9 +27,18 @@ I created three different visualizations to understand the correlation and exist
 
 The scatterplot that shows the correlation between popularity rank and average film rating. File name: scatterplot.PNG
 
+<br/>![Scatterplot](https://github.com/goel-mehul/Factors-Affecting-Actor-Popularity/blob/main/Visualizations/scatterplot.PNG "Scatterplot")
+<h4 align="center">Figure 1: Scatterplot</h4>
+
 The histogram that shows the distribution of the top 50 and bottom 50 of the top 100 actors with relation to their average film rating. File name: histogram.png
 
+<br/>![Histogram](https://github.com/goel-mehul/Factors-Affecting-Actor-Popularity/blob/main/Visualizations/histogram.png "Histogram")
+<h4 align="center">Figure 2: Histogram</h4>
+
 The pie chart that shows the distribution of genres for the top 10 films of the most popular actors. File name: piechart.PNG
+
+<br/>![Pie Chart](https://github.com/goel-mehul/Factors-Affecting-Actor-Popularity/blob/main/Visualizations/piechart.PNG "Pie Chart")
+<h4 align="center">Figure 3: Pie Chart</h4>
 
 
 <h2>Instructions for running the code</h2>
