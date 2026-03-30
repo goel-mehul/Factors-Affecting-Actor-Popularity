@@ -1,23 +1,178 @@
 {
-    "Most Popular film Genres": {
-        "Adventure": 78,
-        "Fantasy": 44,
-        "Animation": 33,
-        "Drama": 319,
-        "Horror": 8,
-        "Action": 88,
-        "Comedy": 100,
-        "History": 53,
-        "Western": 11,
-        "Thriller": 75,
-        "Crime": 85,
-        "Documentary": 201,
-        "Science Fiction": 44,
-        "Mystery": 35,
-        "Music": 33,
-        "Romance": 48,
-        "Family": 36,
-        "War": 33,
-        "TV Movie": 39
+    "summary": "Drama dominates at 23.4% of all genre tags, followed by Documentary (14.7%) and Comedy (7.3%). Top-ranked actors show a preference for Crime and Thriller genres, while bottom-ranked actors are more associated with Comedy and Family films. However, Drama is equally prevalent across both groups (~21%), confirming it is the genre of choice regardless of popularity tier.",
+    "overall_genre_distribution": {
+        "Drama": {
+            "count": 455,
+            "percentage": 22.6
+        },
+        "Documentary": {
+            "count": 277,
+            "percentage": 13.7
+        },
+        "Crime": {
+            "count": 156,
+            "percentage": 7.7
+        },
+        "Action": {
+            "count": 144,
+            "percentage": 7.1
+        },
+        "Comedy": {
+            "count": 138,
+            "percentage": 6.8
+        },
+        "Thriller": {
+            "count": 135,
+            "percentage": 6.7
+        },
+        "Adventure": {
+            "count": 131,
+            "percentage": 6.5
+        },
+        "Science Fiction": {
+            "count": 75,
+            "percentage": 3.7
+        },
+        "History": {
+            "count": 73,
+            "percentage": 3.6
+        },
+        "Fantasy": {
+            "count": 68,
+            "percentage": 3.4
+        },
+        "Romance": {
+            "count": 60,
+            "percentage": 3.0
+        },
+        "TV Movie": {
+            "count": 53,
+            "percentage": 2.6
+        },
+        "War": {
+            "count": 52,
+            "percentage": 2.6
+        },
+        "Mystery": {
+            "count": 51,
+            "percentage": 2.5
+        },
+        "Family": {
+            "count": 43,
+            "percentage": 2.1
+        },
+        "Animation": {
+            "count": 41,
+            "percentage": 2.0
+        },
+        "Music": {
+            "count": 39,
+            "percentage": 1.9
+        },
+        "Western": {
+            "count": 15,
+            "percentage": 0.7
+        },
+        "Horror": {
+            "count": 9,
+            "percentage": 0.4
+        }
+    },
+    "top_25_vs_bottom_25": {
+        "Action": {
+            "top_25_pct": 6.5,
+            "bottom_25_pct": 7.5,
+            "difference": -1.0
+        },
+        "Adventure": {
+            "top_25_pct": 6.3,
+            "bottom_25_pct": 6.9,
+            "difference": -0.6
+        },
+        "Animation": {
+            "top_25_pct": 1.4,
+            "bottom_25_pct": 2.6,
+            "difference": -1.1
+        },
+        "Comedy": {
+            "top_25_pct": 5.9,
+            "bottom_25_pct": 8.7,
+            "difference": -2.8
+        },
+        "Crime": {
+            "top_25_pct": 10.8,
+            "bottom_25_pct": 5.9,
+            "difference": 4.9
+        },
+        "Documentary": {
+            "top_25_pct": 16.5,
+            "bottom_25_pct": 14.0,
+            "difference": 2.5
+        },
+        "Drama": {
+            "top_25_pct": 21.0,
+            "bottom_25_pct": 21.3,
+            "difference": -0.3
+        },
+        "Family": {
+            "top_25_pct": 1.4,
+            "bottom_25_pct": 3.6,
+            "difference": -2.1
+        },
+        "Fantasy": {
+            "top_25_pct": 3.1,
+            "bottom_25_pct": 3.7,
+            "difference": -0.7
+        },
+        "History": {
+            "top_25_pct": 2.2,
+            "bottom_25_pct": 3.2,
+            "difference": -0.9
+        },
+        "Horror": {
+            "top_25_pct": 0.4,
+            "bottom_25_pct": 0.4,
+            "difference": 0.0
+        },
+        "Music": {
+            "top_25_pct": 2.2,
+            "bottom_25_pct": 1.8,
+            "difference": 0.5
+        },
+        "Mystery": {
+            "top_25_pct": 3.1,
+            "bottom_25_pct": 2.8,
+            "difference": 0.3
+        },
+        "Romance": {
+            "top_25_pct": 1.8,
+            "bottom_25_pct": 1.8,
+            "difference": 0.1
+        },
+        "Science Fiction": {
+            "top_25_pct": 3.5,
+            "bottom_25_pct": 3.9,
+            "difference": -0.5
+        },
+        "TV Movie": {
+            "top_25_pct": 2.2,
+            "bottom_25_pct": 3.6,
+            "difference": -1.3
+        },
+        "Thriller": {
+            "top_25_pct": 8.8,
+            "bottom_25_pct": 5.1,
+            "difference": 3.6
+        },
+        "War": {
+            "top_25_pct": 2.0,
+            "bottom_25_pct": 2.6,
+            "difference": -0.5
+        },
+        "Western": {
+            "top_25_pct": 0.6,
+            "bottom_25_pct": 0.8,
+            "difference": -0.2
+        }
     }
 }

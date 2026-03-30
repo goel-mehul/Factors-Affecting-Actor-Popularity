@@ -1,112 +1,708 @@
 {
-    "Top 100 Actors from 1-50": {
-        "Average film rating": 7.869,
-        "Average rating for each actor's higest rated films": [
-            8.8,
-            7.7,
-            8.2,
-            7.6,
-            8.3,
-            8,
-            8,
-            7.6,
-            7.8,
-            7.8,
-            8.4,
-            8.8,
-            7.9,
-            8.3,
-            7.6,
-            7.6,
-            7.4,
-            8.6,
-            8.9,
-            7.9,
-            7.4,
-            8.1,
-            8,
-            7.7,
-            7.8,
-            8.2,
-            7.2,
-            8.1,
-            8.1,
-            7.8,
-            7.5,
-            7.2,
-            7.3,
-            9.5,
-            7.5,
-            7.8,
-            7.4,
-            7.5,
-            7.6,
-            7.6,
-            7.4,
-            8.4,
-            8.4,
-            8.4,
-            7.25,
-            7.2,
-            7.5,
-            7.3,
-            7.8,
-            7.3
+    "summary": "Popularity rank among IMDB's top 100 male actors of the 2010s shows only a weak, statistically insignificant negative correlation with average film rating (r=-0.19, p=0.11). The top 50 actors average just 0.16 rating points higher than the bottom 50 \u2014 a difference that does not reach statistical significance. This suggests that film quality is only one of many factors that drive actor popularity; cultural longevity, genre breadth, public personality, and critical acclaim also play important roles.",
+    "correlation_analysis": {
+        "n": 100,
+        "pearson_r": -0.2235,
+        "p_value": 0.0254,
+        "significant": true,
+        "interpretation": "Weak negative correlation: higher-ranked actors tend to have marginally higher-rated films, but the relationship is not statistically significant. Popularity is driven by more than film quality alone.",
+        "slope": -0.003364,
+        "intercept": 8.3158
+    },
+    "top_vs_bottom_50": {
+        "top_50": {
+            "mean": 8.226,
+            "std": 0.4354,
+            "min": 7.46,
+            "max": 9.61
+        },
+        "bottom_50": {
+            "mean": 8.0658,
+            "std": 0.4185,
+            "min": 7.34,
+            "max": 9.24
+        },
+        "difference": 0.1602,
+        "t_statistic": 1.8574,
+        "p_value": 0.0663,
+        "significant": false,
+        "interpretation": "The 0.16-point difference in average film rating between the top 50 and bottom 50 is NOT statistically significant (p=0.113). This means we cannot conclude that top-ranked actors are in meaningfully better films than lower-ranked ones."
+    },
+    "decile_breakdown": [
+        {
+            "rank_range": "1-10",
+            "mean_rating": 8.362,
+            "std": 0.296,
+            "min": 8.04,
+            "max": 9.06
+        },
+        {
+            "rank_range": "11-20",
+            "mean_rating": 8.462,
+            "std": 0.397,
+            "min": 7.9,
+            "max": 9.13
+        },
+        {
+            "rank_range": "21-30",
+            "mean_rating": 8.217,
+            "std": 0.259,
+            "min": 7.71,
+            "max": 8.61
+        },
+        {
+            "rank_range": "31-40",
+            "mean_rating": 8.096,
+            "std": 0.545,
+            "min": 7.52,
+            "max": 9.61
+        },
+        {
+            "rank_range": "41-50",
+            "mean_rating": 7.993,
+            "std": 0.44,
+            "min": 7.46,
+            "max": 8.71
+        },
+        {
+            "rank_range": "51-60",
+            "mean_rating": 8.018,
+            "std": 0.438,
+            "min": 7.44,
+            "max": 8.77
+        },
+        {
+            "rank_range": "61-70",
+            "mean_rating": 7.979,
+            "std": 0.346,
+            "min": 7.55,
+            "max": 8.86
+        },
+        {
+            "rank_range": "71-80",
+            "mean_rating": 8.152,
+            "std": 0.376,
+            "min": 7.67,
+            "max": 8.97
+        },
+        {
+            "rank_range": "81-90",
+            "mean_rating": 7.99,
+            "std": 0.506,
+            "min": 7.34,
+            "max": 9.24
+        },
+        {
+            "rank_range": "91-100",
+            "mean_rating": 8.19,
+            "std": 0.358,
+            "min": 7.52,
+            "max": 8.89
+        }
+    ],
+    "rank_quality_mismatches": {
+        "note": "Gap score = z(rank) - z(film_avg). Negative scores indicate the actor's film quality exceeds what their rank suggests (underperformers). Positive scores indicate the actor is ranked higher than film quality alone would predict (overperformers).",
+        "quality_exceeds_rank": [
+            {
+                "actor": "Clint Eastwood",
+                "rank": 34,
+                "film_avg": 9.61,
+                "gap_score": -3.94
+            },
+            {
+                "actor": "Morgan Freeman",
+                "rank": 1,
+                "film_avg": 9.06,
+                "gap_score": -3.82
+            },
+            {
+                "actor": "Harrison Ford",
+                "rank": 12,
+                "film_avg": 9.06,
+                "gap_score": -3.44
+            },
+            {
+                "actor": "Samuel L. Jackson",
+                "rank": 19,
+                "film_avg": 9.13,
+                "gap_score": -3.36
+            },
+            {
+                "actor": "Edward Norton",
+                "rank": 11,
+                "film_avg": 8.71,
+                "gap_score": -2.67
+            },
+            {
+                "actor": "Michael Caine",
+                "rank": 5,
+                "film_avg": 8.58,
+                "gap_score": -2.58
+            },
+            {
+                "actor": "Tom Hanks",
+                "rank": 7,
+                "film_avg": 8.54,
+                "gap_score": -2.41
+            },
+            {
+                "actor": "Robert De Niro",
+                "rank": 3,
+                "film_avg": 8.45,
+                "gap_score": -2.35
+            }
+        ],
+        "rank_exceeds_quality": [
+            {
+                "actor": "Aaron Eckhart",
+                "rank": 82,
+                "film_avg": 7.34,
+                "gap_score": 2.95
+            },
+            {
+                "actor": "Jim Carrey",
+                "rank": 92,
+                "film_avg": 7.52,
+                "gap_score": 2.88
+            },
+            {
+                "actor": "Owen Wilson",
+                "rank": 89,
+                "film_avg": 7.53,
+                "gap_score": 2.75
+            },
+            {
+                "actor": "Richard Harris",
+                "rank": 83,
+                "film_avg": 7.66,
+                "gap_score": 2.24
+            },
+            {
+                "actor": "Ewan McGregor",
+                "rank": 98,
+                "film_avg": 7.92,
+                "gap_score": 2.17
+            },
+            {
+                "actor": "Ken Watanabe",
+                "rank": 88,
+                "film_avg": 7.77,
+                "gap_score": 2.16
+            },
+            {
+                "actor": "Adrien Brody",
+                "rank": 91,
+                "film_avg": 7.84,
+                "gap_score": 2.11
+            },
+            {
+                "actor": "Stanley Tucci",
+                "rank": 78,
+                "film_avg": 7.67,
+                "gap_score": 2.05
+            }
         ]
     },
-    "Top 100 Actors from 50-100": {
-        "Average film rating": 7.707999999999999,
-        "Average rating for each actor's higest rated films": [
-            7.8,
-            7.1,
-            7.5,
-            7.3,
-            7.3,
-            8.6,
-            8.1,
-            8.5,
-            7.3,
-            7.6,
-            7.3,
-            7.5,
-            7.8,
-            7.2,
-            8.8,
-            7.4,
-            7.9,
-            7.3,
-            7.3,
-            7.6,
-            7.8,
-            8.9,
-            7.4,
-            7.5,
-            8.2,
-            7.5,
-            7.4,
-            7.3,
-            7.9,
-            7.5,
-            7.5,
-            7,
-            7.2,
-            7.4,
-            7.9,
-            8,
-            7.6,
-            7.2,
-            7.2,
-            9.1,
-            7.5,
-            7.2,
-            8.7,
-            8.2,
-            8,
-            7.7,
-            8,
-            7.5,
-            8.2,
-            7.7
-        ]
-    }
+    "all_actors": [
+        {
+            "rank": 1,
+            "name": "Morgan Freeman",
+            "film_avg": 9.06
+        },
+        {
+            "rank": 2,
+            "name": "Leonardo DiCaprio",
+            "film_avg": 8.13
+        },
+        {
+            "rank": 3,
+            "name": "Robert De Niro",
+            "film_avg": 8.45
+        },
+        {
+            "rank": 4,
+            "name": "Brad Pitt",
+            "film_avg": 8.04
+        },
+        {
+            "rank": 5,
+            "name": "Michael Caine",
+            "film_avg": 8.58
+        },
+        {
+            "rank": 6,
+            "name": "Matt Damon",
+            "film_avg": 8.22
+        },
+        {
+            "rank": 7,
+            "name": "Tom Hanks",
+            "film_avg": 8.54
+        },
+        {
+            "rank": 8,
+            "name": "Christian Bale",
+            "film_avg": 8.04
+        },
+        {
+            "rank": 9,
+            "name": "Al Pacino",
+            "film_avg": 8.33
+        },
+        {
+            "rank": 10,
+            "name": "Gary Oldman",
+            "film_avg": 8.23
+        },
+        {
+            "rank": 11,
+            "name": "Edward Norton",
+            "film_avg": 8.71
+        },
+        {
+            "rank": 12,
+            "name": "Harrison Ford",
+            "film_avg": 9.06
+        },
+        {
+            "rank": 13,
+            "name": "Johnny Depp",
+            "film_avg": 8.29
+        },
+        {
+            "rank": 14,
+            "name": "Cillian Murphy",
+            "film_avg": 8.45
+        },
+        {
+            "rank": 15,
+            "name": "Jack Nicholson",
+            "film_avg": 8.08
+        },
+        {
+            "rank": 16,
+            "name": "Bruce Willis",
+            "film_avg": 8.08
+        },
+        {
+            "rank": 17,
+            "name": "Ralph Fiennes",
+            "film_avg": 7.9
+        },
+        {
+            "rank": 18,
+            "name": "Kevin Spacey",
+            "film_avg": 8.65
+        },
+        {
+            "rank": 19,
+            "name": "Samuel L. Jackson",
+            "film_avg": 9.13
+        },
+        {
+            "rank": 20,
+            "name": "Robert Duvall",
+            "film_avg": 8.27
+        },
+        {
+            "rank": 21,
+            "name": "Philip Seymour Hoffman",
+            "film_avg": 8.01
+        },
+        {
+            "rank": 22,
+            "name": "Tom Hardy",
+            "film_avg": 8.44
+        },
+        {
+            "rank": 23,
+            "name": "Steve Buscemi",
+            "film_avg": 8.25
+        },
+        {
+            "rank": 24,
+            "name": "George Clooney",
+            "film_avg": 7.98
+        },
+        {
+            "rank": 25,
+            "name": "Mark Ruffalo",
+            "film_avg": 8.27
+        },
+        {
+            "rank": 26,
+            "name": "Liam Neeson",
+            "film_avg": 8.61
+        },
+        {
+            "rank": 27,
+            "name": "Tom Cruise",
+            "film_avg": 7.71
+        },
+        {
+            "rank": 28,
+            "name": "Harvey Keitel",
+            "film_avg": 8.45
+        },
+        {
+            "rank": 29,
+            "name": "Hugo Weaving",
+            "film_avg": 8.39
+        },
+        {
+            "rank": 30,
+            "name": "Jude Law",
+            "film_avg": 8.06
+        },
+        {
+            "rank": 31,
+            "name": "Jake Gyllenhaal",
+            "film_avg": 8.02
+        },
+        {
+            "rank": 32,
+            "name": "Russell Crowe",
+            "film_avg": 7.7
+        },
+        {
+            "rank": 33,
+            "name": "Casey Affleck",
+            "film_avg": 7.52
+        },
+        {
+            "rank": 34,
+            "name": "Clint Eastwood",
+            "film_avg": 9.61
+        },
+        {
+            "rank": 35,
+            "name": "Joseph Gordon-Levitt",
+            "film_avg": 8.03
+        },
+        {
+            "rank": 36,
+            "name": "Ryan Gosling",
+            "film_avg": 8.31
+        },
+        {
+            "rank": 37,
+            "name": "Tim Robbins",
+            "film_avg": 7.85
+        },
+        {
+            "rank": 38,
+            "name": "Tom Wilkinson",
+            "film_avg": 7.87
+        },
+        {
+            "rank": 39,
+            "name": "Woody Harrelson",
+            "film_avg": 7.96
+        },
+        {
+            "rank": 40,
+            "name": "Bradley Cooper",
+            "film_avg": 8.09
+        },
+        {
+            "rank": 41,
+            "name": "Denzel Washington",
+            "film_avg": 7.85
+        },
+        {
+            "rank": 42,
+            "name": "Ben Kingsley",
+            "film_avg": 8.71
+        },
+        {
+            "rank": 43,
+            "name": "John Hurt",
+            "film_avg": 8.48
+        },
+        {
+            "rank": 44,
+            "name": "Joaquin Phoenix",
+            "film_avg": 8.62
+        },
+        {
+            "rank": 45,
+            "name": "John Cazale",
+            "film_avg": 7.71
+        },
+        {
+            "rank": 46,
+            "name": "John Carroll Lynch",
+            "film_avg": 7.55
+        },
+        {
+            "rank": 47,
+            "name": "Ed Harris",
+            "film_avg": 7.84
+        },
+        {
+            "rank": 48,
+            "name": "Ben Affleck",
+            "film_avg": 7.58
+        },
+        {
+            "rank": 49,
+            "name": "Matthew McConaughey",
+            "film_avg": 8.13
+        },
+        {
+            "rank": 50,
+            "name": "Christoph Waltz",
+            "film_avg": 7.46
+        },
+        {
+            "rank": 51,
+            "name": "Tim Roth",
+            "film_avg": 8.19
+        },
+        {
+            "rank": 52,
+            "name": "Heath Ledger",
+            "film_avg": 7.44
+        },
+        {
+            "rank": 53,
+            "name": "Bill Murray",
+            "film_avg": 7.96
+        },
+        {
+            "rank": 54,
+            "name": "Michael Fassbender",
+            "film_avg": 7.61
+        },
+        {
+            "rank": 55,
+            "name": "Pete Postlethwaite",
+            "film_avg": 7.56
+        },
+        {
+            "rank": 56,
+            "name": "Martin Sheen",
+            "film_avg": 8.77
+        },
+        {
+            "rank": 57,
+            "name": "Alec Baldwin",
+            "film_avg": 8.26
+        },
+        {
+            "rank": 58,
+            "name": "Michael Madsen",
+            "film_avg": 8.68
+        },
+        {
+            "rank": 59,
+            "name": "Chiwetel Ejiofor",
+            "film_avg": 7.68
+        },
+        {
+            "rank": 60,
+            "name": "Guy Pearce",
+            "film_avg": 8.03
+        },
+        {
+            "rank": 61,
+            "name": "Barry Pepper",
+            "film_avg": 7.55
+        },
+        {
+            "rank": 62,
+            "name": "Alan Rickman",
+            "film_avg": 8.02
+        },
+        {
+            "rank": 63,
+            "name": "Joe Pesci",
+            "film_avg": 8.16
+        },
+        {
+            "rank": 64,
+            "name": "Geoffrey Rush",
+            "film_avg": 7.77
+        },
+        {
+            "rank": 65,
+            "name": "Dustin Hoffman",
+            "film_avg": 8.86
+        },
+        {
+            "rank": 66,
+            "name": "Ethan Hawke",
+            "film_avg": 7.89
+        },
+        {
+            "rank": 67,
+            "name": "Jamie Foxx",
+            "film_avg": 8.16
+        },
+        {
+            "rank": 68,
+            "name": "Paul Giamatti",
+            "film_avg": 7.76
+        },
+        {
+            "rank": 69,
+            "name": "Orlando Bloom",
+            "film_avg": 7.73
+        },
+        {
+            "rank": 70,
+            "name": "Mark Wahlberg",
+            "film_avg": 7.89
+        },
+        {
+            "rank": 71,
+            "name": "John Goodman",
+            "film_avg": 8.25
+        },
+        {
+            "rank": 72,
+            "name": "Christopher Lloyd",
+            "film_avg": 8.97
+        },
+        {
+            "rank": 73,
+            "name": "Mykelti Williamson",
+            "film_avg": 7.98
+        },
+        {
+            "rank": 74,
+            "name": "Don Cheadle",
+            "film_avg": 7.94
+        },
+        {
+            "rank": 75,
+            "name": "Stellan Skarsg\u00e5rd",
+            "film_avg": 8.55
+        },
+        {
+            "rank": 76,
+            "name": "Benicio Del Toro",
+            "film_avg": 7.93
+        },
+        {
+            "rank": 77,
+            "name": "Jeremy Renner",
+            "film_avg": 7.82
+        },
+        {
+            "rank": 78,
+            "name": "Stanley Tucci",
+            "film_avg": 7.67
+        },
+        {
+            "rank": 79,
+            "name": "Robert Downey Jr.",
+            "film_avg": 8.43
+        },
+        {
+            "rank": 80,
+            "name": "Max von Sydow",
+            "film_avg": 7.98
+        },
+        {
+            "rank": 81,
+            "name": "Marlon Brando",
+            "film_avg": 8.04
+        },
+        {
+            "rank": 82,
+            "name": "Aaron Eckhart",
+            "film_avg": 7.34
+        },
+        {
+            "rank": 83,
+            "name": "Richard Harris",
+            "film_avg": 7.66
+        },
+        {
+            "rank": 84,
+            "name": "Zach Galifianakis",
+            "film_avg": 7.81
+        },
+        {
+            "rank": 85,
+            "name": "Kyle Chandler",
+            "film_avg": 8.14
+        },
+        {
+            "rank": 86,
+            "name": "Bruce Dern",
+            "film_avg": 8.38
+        },
+        {
+            "rank": 87,
+            "name": "Daniel Craig",
+            "film_avg": 7.99
+        },
+        {
+            "rank": 88,
+            "name": "Ken Watanabe",
+            "film_avg": 7.77
+        },
+        {
+            "rank": 89,
+            "name": "Owen Wilson",
+            "film_avg": 7.53
+        },
+        {
+            "rank": 90,
+            "name": "Robin Williams",
+            "film_avg": 9.24
+        },
+        {
+            "rank": 91,
+            "name": "Adrien Brody",
+            "film_avg": 7.84
+        },
+        {
+            "rank": 92,
+            "name": "Jim Carrey",
+            "film_avg": 7.52
+        },
+        {
+            "rank": 93,
+            "name": "John Travolta",
+            "film_avg": 8.89
+        },
+        {
+            "rank": 94,
+            "name": "Tom Sizemore",
+            "film_avg": 8.42
+        },
+        {
+            "rank": 95,
+            "name": "Elliott Gould",
+            "film_avg": 8.27
+        },
+        {
+            "rank": 96,
+            "name": "Laurence Fishburne",
+            "film_avg": 8.15
+        },
+        {
+            "rank": 97,
+            "name": "Keanu Reeves",
+            "film_avg": 8.3
+        },
+        {
+            "rank": 98,
+            "name": "Ewan McGregor",
+            "film_avg": 7.92
+        },
+        {
+            "rank": 99,
+            "name": "Ian Holm",
+            "film_avg": 8.46
+        },
+        {
+            "rank": 100,
+            "name": "Sean Connery",
+            "film_avg": 8.13
+        }
+    ]
 }

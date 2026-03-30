@@ -1,192 +1,189 @@
+"""
+part1.py — Data Collection
+==========================
+Scrapes IMDB's top 100 most popular actors list and queries The Movie Database
+(TMDB) API to build an actor profile database.
+
+Run this script up to 4 times. Each run inserts 25 new rows into both the
+Actors and Actors_Popularity tables. The database is fully populated after
+the 4th run.
+
+Usage:
+    python part1.py
+
+Environment:
+    Set TMDB_API_KEY as an environment variable before running:
+        export TMDB_API_KEY=your_key_here
+"""
+
+import os
+import json
+import sqlite3
 import requests
 from bs4 import BeautifulSoup
-import requests
-import json
-import os
-import sqlite3
 
-#####################################
-# API key for the themoviedb data.
-#####################################
-API_KEY = "58a16777781e3378851826f5f021d7d7"
+# ── Configuration ─────────────────────────────────────────────────────────────
+IMDB_URL    = "https://www.imdb.com/list/ls022928819/"
+TMDB_BASE   = "https://api.themoviedb.org/3/search/person"
+DB_NAME     = "Popular_Actors.db"
+BATCH_SIZE  = 25
+MAX_ACTORS  = 100
 
-def get_actors():
-    '''
-    Scrapes an IMDB website that contains the names and the ranks of the most popular actors till 2018.
-    The method scrapes the names and the ranks and puts each of them in a seperate list.
-    The method returns a final list, contaning the two previously mentioned lists.
-    '''
-
-    url = "https://www.imdb.com/list/ls022928819/"
-    page = requests.get(url)
-    soup = BeautifulSoup(page.content, 'html.parser')
-    actors_name_list = []
-    actors = soup.find_all("h3", class_="lister-item-header")
-    for i in range(100):
-        name = actors[i].find("a")
-        actor_name = name.text.strip()
-        actors_name_list.append(actor_name)
-    actors_popularity = []
-    populars = soup.find_all("span", class_="lister-item-index")
-    for popular in populars:
-        actors_popularity.append(popular.text)
-    imdb_actors = []
-    for i in range(len(actors_name_list)):
-        imdb_actors.append([actors_popularity[i], actors_name_list[i]])
-    return imdb_actors
+API_KEY = os.environ.get("TMDB_API_KEY", "")
+if not API_KEY:
+    raise EnvironmentError(
+        "TMDB_API_KEY is not set. "
+        "Export it before running: export TMDB_API_KEY=your_key_here"
+    )
 
 
-def setUp_imdb_Database(db_name):
-    '''
-    This method sets up the database for the project. It takes a string parameter db_name.
-    This is the name of the database. The method initializes cur and conn.
-    It returns cur and conn variables.
-    '''
-    path = os.path.dirname(os.path.abspath(__file__))
-    conn = sqlite3.connect(path+'/'+db_name)
-    cur = conn.cursor()
+# ── Database setup ────────────────────────────────────────────────────────────
+
+def get_db_connection(db_name: str) -> tuple:
+    """Connect to (or create) the SQLite database. Returns (cursor, connection)."""
+    path = os.path.join(os.path.dirname(os.path.abspath(__file__)), db_name)
+    conn = sqlite3.connect(path)
+    cur  = conn.cursor()
     return cur, conn
 
 
-def create_imdb_actors_table(cur, conn):
-    '''
-    This method creates the Actors_Popularity table based on the data collected from scraping the IMDB website.
-    The table has two columns, popularity rank, which is the primary key and actor_name.
-    Popularity rank contains integer values while actor_name has string values.
-    The method takes cur and conn.
-    The method doesn't return anything but makes changes to the database.
-    '''
-    cur.execute("CREATE TABLE IF NOT EXISTS Actors_Popularity (popularity_rank INTEGER PRIMARY KEY, actor_name STRING)")
+# ── IMDB scraping ─────────────────────────────────────────────────────────────
+
+def scrape_imdb_actors() -> list[tuple[str, str]]:
+    """
+    Scrapes the IMDB popular actors list.
+
+    Returns:
+        List of (rank_str, actor_name) tuples for the top 100 actors.
+    """
+    response = requests.get(IMDB_URL, timeout=10)
+    response.raise_for_status()
+    soup = BeautifulSoup(response.content, "html.parser")
+
+    name_tags = soup.find_all("h3", class_="lister-item-header")
+    rank_tags = soup.find_all("span", class_="lister-item-index")
+
+    actors = []
+    for i in range(min(MAX_ACTORS, len(name_tags))):
+        name = name_tags[i].find("a").text.strip()
+        rank = rank_tags[i].text.strip()
+        actors.append((rank, name))
+
+    return actors
+
+
+def create_actors_popularity_table(cur: sqlite3.Cursor, conn: sqlite3.Connection):
+    """Creates the Actors_Popularity table if it doesn't already exist."""
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS Actors_Popularity (
+            popularity_rank INTEGER PRIMARY KEY,
+            actor_name      TEXT NOT NULL
+        )
+    """)
     conn.commit()
 
 
-def add_imdb_actors_data(cur, conn, count):
-    '''
-    This method inserts data rows to the Actors_Popularity table.
-    The method takes three parameters. It takes cur, conn from the ssetup database method.
-    It takes a count parameter which keeps track of which data row needs to be added to the table.
-    It calls the get_actors method to get the list of actor names and their popularity rank.
-    The method doesn't return anything but makes changes to the database.
-    '''
-    list1 = get_actors()
-    cur.execute("INSERT INTO Actors_Popularity (popularity_rank, actor_name) VALUES (?, ?)", (list1[count][0], list1[count][1]))
-    conn.commit()
-
-
-def build_imdb_table(cur, conn):
-    '''
-    This method calls all of the previous methods to make changes in the database with respect to the Actor_Popularity table.
-    The method takes two parameters, cur and conn.
-    The method first calls the create_imdb_actors_table method to see if the the table exists or not.
-    The method then counts the number of rows currently existing in the table and then loops to add 25 more data rows.
-    If the table contains equal or more than 100 rows, then nothing more is added to the table.
-    The method doesn't return anything.
-    '''
-    create_imdb_actors_table(cur, conn)
+def populate_actors_popularity_table(cur: sqlite3.Cursor, conn: sqlite3.Connection):
+    """
+    Inserts up to BATCH_SIZE rows into Actors_Popularity per run.
+    Skips if the table already has MAX_ACTORS rows.
+    """
+    create_actors_popularity_table(cur, conn)
     cur.execute("SELECT COUNT(*) FROM Actors_Popularity")
-    data_present = cur.fetchone()
-    count = data_present[0]
-    if count < 100:
-        for i in range(25):
-            add_imdb_actors_data(cur, conn, count)
-            count+=1
+    count = cur.fetchone()[0]
+
+    if count >= MAX_ACTORS:
+        print(f"Actors_Popularity already fully populated ({count} rows). Skipping.")
+        return
+
+    actors = scrape_imdb_actors()
+    for rank, name in actors[count: count + BATCH_SIZE]:
+        cur.execute(
+            "INSERT OR IGNORE INTO Actors_Popularity (popularity_rank, actor_name) VALUES (?, ?)",
+            (rank, name)
+        )
+    conn.commit()
+    cur.execute("SELECT COUNT(*) FROM Actors_Popularity")
+    print(f"Actors_Popularity: {cur.fetchone()[0]} rows total.")
 
 
-def get_total_actors_list():
-    '''
-    This method calls the get_actors method to get the list containing the names of the most popular actors.
-    The method then creates a new list that contains the names of the actors.
-    The names are slightly changed, where any space between the words is replaced by '%20'.
-    This is done so that the new list can be run through an API query.
-    The method return thee new list with the changed actor's names.
-    '''
-    list1 = get_actors()
-    actors_name_list = []
-    for list_item in list1:
-        if ' ' in list_item[1]:
-            name = list_item[1].replace(' ', '%20')
-        else:
-            name = list_item[1]
-        actors_name_list.append(name)
-    return actors_name_list
+# ── TMDB API ──────────────────────────────────────────────────────────────────
+
+def fetch_actor_from_tmdb(actor_name: str) -> dict | None:
+    """
+    Queries the TMDB search API for an actor by name.
+
+    Returns:
+        Dict with keys actor_id, actor_name, actor_films (empty string placeholder).
+        Returns None if no result is found.
+    """
+    params = {"api_key": API_KEY, "query": actor_name}
+    response = requests.get(TMDB_BASE, params=params, timeout=10)
+    response.raise_for_status()
+    data = response.json()
+
+    results = data.get("results", [])
+    if not results:
+        print(f"  WARNING: No TMDB result found for '{actor_name}'")
+        return None
+
+    top = results[0]
+    return {
+        "actor_id":    top["id"],
+        "actor_name":  top["name"],
+        "actor_films": "",   # populated later by populate_films.py
+    }
 
 
-def get_actors_data(actor_name):
-    '''
-    This method takes a string name of an actor.
-    The method requests the 'themoviedb' api to get data about the actor.
-    The requested data is recieved in the form of a json file and is then stored in the form of a dictionary object.
-    The method returns a list containing the actor's id, his name and an empty string for films.
-    The empty string is filled in a later method.
-    '''
-    base_url = "https://api.themoviedb.org/3/search/person?api_key="
-    url = base_url + API_KEY + "&query=" + actor_name
-    r = requests.get(url)
-    dict = json.loads(r.text)
-    actor_data = dict["results"][0]
-    actor_id = actor_data["id"]
-    actor_name = actor_data["name"]
-    actor_films = ""
-    actor_details = [actor_id, actor_name, actor_films]
-    return actor_details
-
-
-def create_actors_table(cur, conn):
-    '''
-    This method creates the Actors table based on the data collected from requesting to the 'themoviedb' API.
-    The table has three columns, actor_id which is the primary key, actor_name and actor_films.
-    Actor_id contains integer values while actor_name and actor_films have string values.
-    The method takes cur and conn.
-    The method doesn't return anything but makes changes to the database.
-    '''
-    cur.execute("CREATE TABLE IF NOT EXISTS Actors (actor_id INTEGER PRIMARY KEY, actor_name STRING, actor_films STRING)")
+def create_actors_table(cur: sqlite3.Cursor, conn: sqlite3.Connection):
+    """Creates the Actors table if it doesn't already exist."""
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS Actors (
+            actor_id    INTEGER PRIMARY KEY,
+            actor_name  TEXT NOT NULL,
+            actor_films TEXT DEFAULT '',
+            film_avg    REAL
+        )
+    """)
     conn.commit()
 
 
-def add_actor_data(cur, conn, count):
-    '''
-    This method inserts data rows to the Actors table.
-    The method takes three parameters. It takes cur, conn from the setup database method.
-    It takes a count parameter which keeps track of which data row needs to be added to the table.
-    It calls the get_total_actors_list method to get the list of actor names.
-    Using this list the method calls the get_actors_data method to get the actor's id, name and films.
-    The method doesn't return anything but makes changes to the database.
-    '''
-    list1 = get_total_actors_list()
-    actor_details = get_actors_data(list1[count])
-    cur.execute("INSERT INTO Actors (actor_id , actor_name, actor_films) VALUES (?, ?, ?)", (actor_details[0], actor_details[1], actor_details[2]))
-    conn.commit()
-
-
-def build_actors_table(cur, conn):
-    '''
-    This method calls all of the previous methods to make changes in the database with respect to the Actors table.
-    The method takes two parameters, cur and conn.
-    The method first calls the create_actors_table method to see if the the table exists or not.
-    The method then counts the number of rows currently existing in the table and then loops to add 25 more data rows.
-    If the table contains equal or more than 100 rows, then nothing more is added to the table.
-    The method doesn't return anything.
-    '''
+def populate_actors_table(cur: sqlite3.Cursor, conn: sqlite3.Connection):
+    """
+    Inserts up to BATCH_SIZE actor rows from TMDB into the Actors table per run.
+    Skips if the table already has MAX_ACTORS rows.
+    """
     create_actors_table(cur, conn)
     cur.execute("SELECT COUNT(*) FROM Actors")
-    data_present = cur.fetchone()
-    count = data_present[0]
-    if count < 100:
-        for i in range(25):
-            add_actor_data(cur, conn, count)
-            count+= 1
+    count = cur.fetchone()[0]
 
+    if count >= MAX_ACTORS:
+        print(f"Actors already fully populated ({count} rows). Skipping.")
+        return
+
+    actors = scrape_imdb_actors()
+    for _, name in actors[count: count + BATCH_SIZE]:
+        actor = fetch_actor_from_tmdb(name)
+        if actor:
+            cur.execute(
+                "INSERT OR IGNORE INTO Actors (actor_id, actor_name, actor_films) VALUES (?, ?, ?)",
+                (actor["actor_id"], actor["actor_name"], actor["actor_films"])
+            )
+            conn.commit()
+
+    cur.execute("SELECT COUNT(*) FROM Actors")
+    print(f"Actors: {cur.fetchone()[0]} rows total.")
+
+
+# ── Entry point ───────────────────────────────────────────────────────────────
 
 def main():
-    '''
-    This is the main method. It calls three functions.
-    It first calls the setUp_imdb_Database method to create a database file.
-    It then calls the build_imdb_table to complete the Actors_Popularity Table.
-    It then calls the build_actors_table to complete the Actors Table.
-    '''
-    cur, conn = setUp_imdb_Database("Popular_Actors.db")
-    build_imdb_table(cur, conn)
-    build_actors_table(cur, conn)
+    cur, conn = get_db_connection(DB_NAME)
+    populate_actors_popularity_table(cur, conn)
+    populate_actors_table(cur, conn)
+    conn.close()
+    print("Run complete. Run this script again if either table has fewer than 100 rows.")
+
 
 if __name__ == "__main__":
     main()

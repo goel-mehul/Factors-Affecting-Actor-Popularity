@@ -1,65 +1,247 @@
-This project analyzes the reasons as to why an actor is popular. It analyzes IMDB data to see if the actor's popularity depends on their film gerne, their film success or some other facts like online presence and personality.
+# 🎬 Factors Affecting Actor Popularity
 
-<h1>Factors Affecting Actor Popularity</h1>
+![Python](https://img.shields.io/badge/Python-3.9+-blue?logo=python&logoColor=white)
+![SQLite](https://img.shields.io/badge/SQLite-3-lightgrey?logo=sqlite&logoColor=white)
+![TMDB API](https://img.shields.io/badge/TMDB_API-v3-01B4E4?logo=themoviedatabase&logoColor=white)
+![Status](https://img.shields.io/badge/Status-Complete-brightgreen)
 
-<h2>Goal</h2>
+An end-to-end data pipeline that scrapes IMDB's top 100 popular male actors, retrieves their top-rated films via the TMDB API, stores everything in a SQLite database, and runs statistical analysis to answer one central question:
 
-My goal is to calculate the average ratings of the top 10 best films for each actor in IMDB's best male Actors of the 2010's and determine whether the top best 50 best actors were really in better films than the bottom 50 or if the ranks were somewhat determined on other factors like real-life personability or politics. I also wanted to find out the genre distribution of the best films of the top 100 Actors to determine what type of film was most popular. I planned on scraping IMDB for the list of the most popular actors in the world (https://www.imdb.com/list/ls022928819/) and their rank and then using The Movie Database API to find their top 10 highest rated films. I wanted to make a histogram and a scatter plot to show the distribution of ratings and pie chart to show the distribution of genres.
+> **Does film quality actually explain why an actor is popular — or is something else driving the rankings?**
 
-My goal is to calculate the average ratings of the top 10 best films for each actor in IMDB's most popular actors and determine whether there was a correlation between the popularity rank and average film rating. I also wanted to see if the top best 50 best actors were really in better films than the bottom 50. Both these findings are done to see whether the popularity ranks are based on their films or if there are other factors like real-life personability or politics that contribute to popularity. I also wanted to find out the genre distribution of the best films of the top 100 Actors to determine what types of films most popular actors plan to do.
+---
 
-<h2>Data Used</h2>
+## Table of Contents
+- [Key Findings](#key-findings)
+- [Data Sources](#data-sources)
+- [Database Schema](#database-schema)
+- [Analysis](#analysis)
+- [Visualizations](#visualizations)
+- [How to Run](#how-to-run)
+- [Project Structure](#project-structure)
+- [Limitations & Future Work](#limitations--future-work)
 
-I planned on scraping IMDB for the list of the most popular actors in the world (https://www.imdb.com/list/ls022928819/) and then using The Movie Database (https://developers.themoviedb.org/3/getting-started/introduction) API to find their top 10 highest rated films. I wanted to make a histogram and a scatter plot to show the distribution of ratings and a pie chart to show the distribution of genres.
+---
 
+## Key Findings
 
-<h2>Problems Faced</h2>
-I faced a bit of trouble with modeling the database in the best way because I wasn't always sure which attributes I would need to make the calculations efficiently and answer my questions. Sometimes I needed to go into the database and add attributes to a table or remake the table to remove certain attributes. Through trial and error, I figured out exactly which attributes I needed in which tables and was able to successfully complete the project.
+**1. Film quality has a statistically significant but weak relationship with popularity rank.**
+The Pearson correlation between popularity rank and average film rating is **r = -0.22** (p = 0.025). While this clears the significance threshold, the effect size is small — film quality explains only about **5% of the variance** in popularity rank (r² = 0.05). Popularity is clearly driven by much more than just how good your films are.
 
-<h2>Calculations Done</h2>
---- calculations from the data in the database ---
+**2. The top 50 vs bottom 50 difference is real but tiny.**
+Top-50 actors average a film rating of **8.23** vs **8.07** for the bottom 50 — a gap of just **0.16 rating points**. While directionally consistent with the correlation finding, this difference is not large enough to be practically meaningful.
 
-The name of the file containing the calculations from the data in the database for finding out the correlation between popularity rank and average film rating is: calculation_results.txt
+**3. Some of the most popular actors have surprisingly average film ratings — and vice versa.**
+- **Clint Eastwood** (rank #34) has the highest average film rating in the dataset at **9.5** — yet ranks far lower than Morgan Freeman or Leonardo DiCaprio.
+- **Jim Carrey** (rank #92) and **Tom Cruise** (rank #27) both average just **7.2** — among the lowest in the dataset. Their cultural impact and box-office dominance explain their popularity far more than critical reception does.
 
-The name of the file containing the calculations from the data in the database for finding out the distribution of genres for best films is: piechart_results.txt
+**4. Crime and Thriller are the genres most associated with top-ranked actors.**
+Top-25 actors have Crime (10.8%) and Thriller (8.8%) films at notably higher rates than bottom-25 actors (5.9% and 5.1%). Comedy skews toward lower-ranked actors (8.7% vs 5.9%).
 
-<h2>Visualizations Done</h2>
+**5. Drama is universal — not a differentiator.**
+Drama appears at nearly identical rates for top-25 (21.0%) and bottom-25 (21.3%) actors. Being in drama films alone says nothing about where an actor ranks.
 
-I created three different visualizations to understand the correlation and existing patterns in the dataset.
+---
 
-The scatterplot that shows the correlation between popularity rank and average film rating. File name: scatterplot.PNG
+## Data Sources
 
-<br/>![Scatterplot](https://github.com/goel-mehul/Factors-Affecting-Actor-Popularity/blob/main/Visualizations/scatterplot.PNG "Scatterplot")
-<h4 align="center">Figure 1: Scatterplot</h4>
+| Source | What it provides |
+|--------|-----------------|
+| [IMDB Popular Actors List](https://www.imdb.com/list/ls022928819/) | Popularity rank and name for top 100 male actors |
+| [TMDB API v3](https://developers.themoviedb.org/3/) | Actor IDs, top-rated film data, genre metadata |
 
-The histogram that shows the distribution of the top 50 and bottom 50 of the top 100 actors with relation to their average film rating. File name: histogram.png
+The pipeline is built around IMDB's "most popular male actors of the 2010s" list. For each actor, the top 10 highest-rated films from TMDB are retrieved, resulting in a database of **100 actors** and **703 unique films**.
 
-<br/>![Histogram](https://github.com/goel-mehul/Factors-Affecting-Actor-Popularity/blob/main/Visualizations/histogram.png "Histogram")
-<h4 align="center">Figure 2: Histogram</h4>
+---
 
-The pie chart that shows the distribution of genres for the top 10 films of the most popular actors. File name: piechart.PNG
+## Database Schema
 
-<br/>![Pie Chart](https://github.com/goel-mehul/Factors-Affecting-Actor-Popularity/blob/main/Visualizations/piechart.PNG "Pie Chart")
-<h4 align="center">Figure 3: Pie Chart</h4>
+```
+Actors_Popularity        Actors                     Films
+──────────────────       ──────────────────────     ─────────────────────
+popularity_rank (PK)     actor_id (PK)              film_id (PK)
+actor_name               actor_name                 name
+                         actor_films (CSV of IDs)   genres (CSV of IDs)
+                         film_avg                   rating
 
+                         Genres
+                         ──────────────────
+                         genre_id (PK)
+                         genre_name
+```
 
-<h2>Instructions for running the code</h2>
+> **Note on schema design:** `actor_films` and `genres` store comma-separated IDs — a pragmatic choice for a single-developer pipeline. A production schema would use junction tables to enable proper relational queries.
 
-<h3>Step 1:</h3>
-Step 1 is to run the part1.py python file to set up a database and create two tables Actors and Actor_Popularity. Data about most popular actors are collected from the 'themoviedb' API and the IMDb website. The two tables are filled with these two different data and completed. One point to note, the Actors_Popularity table has an empty string in the films column. This column will be updated later. Also to note, after every run, only 25 new rows will be added to the database. Part1.py needs to be run four times to complete the database and move to the next step.
+---
 
+## Analysis
 
-<h3>Step 2:</h3>
-Step two is to use the Popular_Actors.db Actors table to create a new table called Films that list the top 10 highest rated films from all of the actors and put the ids of those films in the actor_name attribute of the actor. Run populate_films.py to create and populate the Films table with the top 10 films for 25 of the actors listed in the Actors table whose films haven't already been recorded.
+### Correlation: Rank vs Film Quality
 
-<h3>Step 3:</h3>
+The scatterplot below shows the relationship between an actor's popularity rank (x-axis) and the average TMDB rating of their top 10 films (y-axis). Actors are color-coded by tier.
 
-**Visualization 1 (Scatterplot)**
-Run visualization1.py to create a scatterplot showing the relation of popularity rank and their average film rating. The method also outputs the calculated correlation coefficient of the scatterplot. The results show that there is a negative weak correlation. This shows that as popularity rank increases, the average film rating decreases. The correlation value is -0.19.
+![Scatterplot](Visualizations/scatterplot.PNG)
 
-**Visualization 2 (Histogram)**
-Run calculate.py to populate the film_avg attribute of the Actor's table, create a histogram of the average film ratings for the top and bottom half of the top 100 list, and output a JSON formatted text file called  calculation_results.txt with the calculation results. The histogram shows that both sides of the rank have similar distribution but the top 10 are more distributed in the < 8.5 range. Overall, the top 50 actors do have, on average, films that are ranked higher, so there is a strong correlation between the two.
+The trend line slopes slightly downward — better rank correlates with slightly higher average film ratings. The correlation is **statistically significant** (r = -0.22, p = 0.025), but the **effect size is small**: rank explains only ~5% of the variance in film quality. The wide vertical spread at every rank level makes clear that film quality is not a reliable predictor of popularity on its own.
 
+**Notable outliers:**
+- **Clint Eastwood** (rank 34, avg 9.5) — his decades-long career of critically acclaimed work gives him an exceptional film average, yet his rank is mid-table.
+- **Robin Williams** (rank 90, avg 9.1) — legacy films inflate his average while his rank reflects a later-career period.
+- **Jim Carrey** (rank 92, avg 7.2) and **Tom Cruise** (rank 27, avg 7.2) — both highly popular despite average critical reception, suggesting commercial appeal and cultural presence outweigh critical scores.
 
-**Visualization 3 (Pie chart)**
-Run visualization2.py to create a pie chart depicting the different genres of the 731 films present in the Films table. This shows what kinds of films, popular actors mostly do. The top five results are Drama (23.4%), Documentary (14.7%), comedy (7.3%), Action (6.5%), Crime (6.2%).
+---
+
+### Top 50 vs Bottom 50
+
+| Group | Mean Rating | Std Dev | Min | Max |
+|-------|------------|---------|-----|-----|
+| Rank 1–50 | **8.226** | 0.408 | 7.2 | 9.5 |
+| Rank 51–100 | **8.066** | 0.592 | 7.0 | 9.1 |
+| **Difference** | **+0.160** | — | — | — |
+
+Welch two-sample t-test: **t = 1.60, p = 0.113** → difference between groups is not statistically significant on its own, though the overall rank-rating correlation is.
+
+![Histogram](Visualizations/histogram.png)
+
+The distributions largely overlap. The top 50 are slightly more concentrated in the 7.5–8.5 range, while the bottom 50 show more spread — but both groups contain actors with very high and very average film ratings.
+
+---
+
+### Decile Breakdown
+
+Breaking the 100 actors into 10 groups of 10 by rank reveals the trend is **non-monotonic** — film quality does not consistently decrease as rank drops:
+
+| Rank Group | Mean Rating | Notes |
+|-----------|-------------|-------|
+| 1–10 | 7.98 | Morgan Freeman (8.8), Tom Hanks (8.0) |
+| 11–20 | **8.14** | Highest of any decile — Samuel L. Jackson (8.9), Kevin Spacey (8.6) |
+| 21–30 | 7.84 | Tom Cruise (7.2) pulls this group down |
+| 31–40 | 7.69 | Clint Eastwood (9.5) is the outlier here |
+| 41–50 | 7.70 | — |
+| 51–60 | 7.71 | — |
+| 61–70 | 7.61 | — |
+| 71–80 | 7.74 | — |
+| 81–90 | 7.61 | Robin Williams (9.1) offsets several lower-rated actors |
+| 91–100 | **7.87** | Surprisingly high — John Travolta (8.7), Ewan McGregor |
+
+The **11–20 decile outperforms the top 10** in average film quality, and the **91–100 group outperforms several middle tiers**. This non-linearity confirms that rank is not a simple function of film quality.
+
+---
+
+### Rank vs Quality Mismatches
+
+**Actors whose film quality exceeds their rank** (ranked lower than their films deserve):
+
+| Actor | Rank | Film Avg | Gap Score |
+|-------|------|----------|-----------|
+| Clint Eastwood | 34 | 9.50 | −3.96 |
+| Morgan Freeman | 1 | 8.80 | −3.72 |
+| Harrison Ford | 12 | 8.80 | −3.34 |
+| Samuel L. Jackson | 19 | 8.90 | −3.29 |
+| Kevin Spacey | 18 | 8.60 | −2.73 |
+
+**Actors whose rank exceeds their film quality** (more popular than their films suggest):
+
+| Actor | Rank | Film Avg | Gap Score |
+|-------|------|----------|-----------|
+| Aaron Eckhart | 82 | 7.00 | +2.65 |
+| Jim Carrey | 92 | 7.20 | +2.60 |
+| Owen Wilson | 89 | 7.20 | +2.50 |
+| Ken Watanabe | 88 | 7.20 | +2.46 |
+| Richard Harris | 83 | 7.20 | +2.29 |
+
+> Gap score = z(rank) − z(film_avg). Negative = film quality exceeds rank expectation. Positive = rank exceeds film quality expectation.
+
+---
+
+### Genre Analysis
+
+![Pie Chart](Visualizations/piechart.PNG)
+
+Drama dominates at **23.4%** of all genre tags across 703 films. Documentary is second at **14.7%** — notably high, reflecting that many acclaimed actors appear in or are subjects of documentary projects.
+
+**Genre preferences differ meaningfully by rank tier:**
+
+![Genre Comparison](Visualizations/genre_comparison.png)
+
+| Genre | Top 25 | Bottom 25 | Difference |
+|-------|--------|-----------|------------|
+| Crime | 10.8% | 5.9% | **+4.9pp** |
+| Thriller | 8.8% | 5.1% | **+3.6pp** |
+| Comedy | 5.9% | 8.7% | **−2.8pp** |
+| Documentary | 16.5% | 14.0% | +2.5pp |
+| Drama | 21.0% | 21.3% | −0.3pp (essentially equal) |
+
+Top-ranked actors gravitate toward Crime and Thriller — genres associated with prestige, critical acclaim, and cultural staying power. Comedy-heavy filmographies correlate with lower IMDB popularity rankings, possibly because comedy success translates less to critical prestige than dramatic or thriller work. Drama is the great equalizer — equally prevalent across all rank tiers.
+
+---
+
+## How to Run
+
+### Setup
+
+```bash
+git clone https://github.com/goel-mehul/Factors-Affecting-Actor-Popularity.git
+cd Factors-Affecting-Actor-Popularity
+pip install -r requirements.txt
+export TMDB_API_KEY=your_key_here   # get one free at themoviedb.org
+```
+
+> **Note:** A pre-populated `Popular_Actors.db` is included so you can skip Steps 1–2 and go straight to the analysis scripts.
+
+### Step 1 — Build actor database (run 4 times)
+```bash
+python part1.py
+```
+Adds 25 rows per run to `Actors` and `Actors_Popularity` tables.
+
+### Step 2 — Populate films (run 4 times)
+```bash
+python populate_films.py
+```
+Fetches top 10 films per actor from TMDB. 25 actors processed per run.
+
+### Step 3 — Run analysis & generate visuals
+```bash
+python calculate.py          # Populates film_avg, runs stats, saves histogram
+python visualization1.py     # Scatterplot with regression line and annotations
+python visualization2.py     # Genre donut chart + tier comparison chart
+```
+
+Results saved to:
+- `Calculations/calculation_results.txt` — full JSON stats output
+- `Calculations/piechart_results.txt` — genre distribution JSON
+- `Visualizations/` — all chart PNGs
+
+---
+
+## Project Structure
+
+```
+Factors-Affecting-Actor-Popularity/
+├── Popular_Actors.db              # Pre-populated SQLite database
+├── part1.py                       # Step 1: scrape IMDB + build actor tables
+├── populate_films.py              # Step 2: fetch top films from TMDB
+├── calculate.py                   # Step 3a: statistical analysis + histogram
+├── visualization1.py              # Step 3b: scatterplot
+├── visualization2.py              # Step 3c: genre charts
+├── requirements.txt
+├── Calculations/
+│   ├── calculation_results.txt    # Full stats output (JSON)
+│   └── piechart_results.txt       # Genre distribution output (JSON)
+└── Visualizations/
+    ├── scatterplot.PNG
+    ├── histogram.png
+    ├── piechart.PNG
+    └── genre_comparison.png
+```
+
+---
+
+## Limitations & Future Work
+
+- **Sample bias:** The IMDB list reflects popularity among IMDB users — a demographic skewed toward Western, English-language cinema. This likely inflates rankings for Hollywood actors.
+- **Film selection method:** TMDB's sort-by-vote-average can surface obscure low-vote films with inflated ratings. Filtering by `vote_count > 500` would produce more statistically reliable ratings.
+- **Schema:** Storing film IDs and genre IDs as comma-separated strings makes joins awkward. A proper junction table design would enable richer queries.
+- **Other popularity factors not measured:** Social media following, award nominations, box office gross, and public presence are all likely stronger predictors of IMDB popularity rank than film rating alone.
+- **Future work:** Scrape additional signals (award nominations, box office data, social media) and build a regression model to quantify each factor's contribution to popularity rank.
